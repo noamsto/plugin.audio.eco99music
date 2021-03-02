@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.eco99music" name="eco99music" version="0.0.5" provider-name="Nir Elbaz, Noam Stolero">
+<addon id="plugin.audio.eco99music" name="eco99music" version="0.0.6" provider-name="Nir Elbaz, Noam Stolero">
     <requires>
-        <import addon="xbmc.python" version="2.25.0"/>
-        <import addon="script.module.requests" version="2.12.4"/>
-        <import addon="script.module.xmltodict"/>
-        <import addon="script.module.six"/>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" version="2.22.0+matrix.1"/>
+        <import addon="script.module.xmltodict" version="0.12.0+matrix.2"/>
+        <import addon="script.module.six" version="1.14.0+matrix.2"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>audio</provides>
@@ -30,7 +30,7 @@ FYI - our content is available only in Israel.
         <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
         <website>http://eco99fm.maariv.co.il/</website>
         <email>radio@eco99.fm</email>
-        <source>https://github.com/nire0510/plugin.audio.eco99music</source>
+        <source>https://github.com/noamsto/plugin.audio.eco99music</source>
         <assets>
             <icon>resources/media/icon.png</icon>
             <fanart>resources/media/fanart.jpg</fanart>
