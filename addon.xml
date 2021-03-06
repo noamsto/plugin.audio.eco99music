@@ -27,7 +27,7 @@ FYI - our content is available only in Israel.
         <disclaimer lang="en_GB">This is an official ECO 99FM Kodi add-on</disclaimer>
         <language>he</language>
         <platform>all</platform>
-        <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+        <license>GPL-3.0-only</license>
         <website>http://eco99fm.maariv.co.il/</website>
         <email>radio@eco99.fm</email>
         <source>https://github.com/noamsto/plugin.audio.eco99music</source>

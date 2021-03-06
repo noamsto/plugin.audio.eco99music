@@ -125,7 +125,7 @@ def build_menu(items, is_folder):
             'poster':
             items[item]['album_cover'],
             'fanart':
-            os.path.join(ADDON_FOLDER, 'resources/media/fanart.jpg')
+            os.path.join(ADDON_FOLDER, 'resources', 'media', 'fanart.jpg')
         })
         url = items[item]['url']
         items_list.append((url, li, is_folder))
