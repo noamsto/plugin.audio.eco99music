@@ -8,7 +8,7 @@ import xbmcplugin
 import requests
 import re
 import xmltodict
-from six.moves.urllib.parse import parse_qs, urlencode
+from urllib.parse import urlencode, parse_qs
 
 
 def build_url(query):
@@ -48,17 +48,13 @@ def get_channels():
     for item in rss["rss"]["channel"]["item"]:
         channels.update({
             index: {
-                'album_cover':
-                re.search("src='([^']+)'", item['description']).group(1),
-                'title':
-                item['title'],
-                'description':
-                item['itunes:summary'],
-                'url':
-                build_url({
-                    'mode': 'playlist',
-                    'url': item['link']
-                })
+                'album_cover': re.search("src='([^']+)'", item['description']).group(1),
+                'title'      : item['title'],
+                'description': item['itunes:summary'],
+                'url'        : build_url({
+                                    'mode': 'playlist',
+                                    'url': item['link']
+                               })
             }
         })
         index += 1
@@ -74,22 +70,20 @@ def get_playlists(url):
     :rtype: dict
     """
     rss = get_rss(url)
+
     playlists = {}
     index = 1
+
     for item in rss["rss"]["channel"]["item"]:
         playlists.update({
             index: {
-                'album_cover':
-                re.search("src='([^']+)'", item['description']).group(1),
-                'title':
-                item['title'],
-                'description':
-                item['itunes:summary'],
-                'url':
-                build_url({
-                    'mode': 'stream',
-                    'url': item['enclosure']['@url']
-                })
+                'album_cover': re.search("src='([^']+)'", item['description']).group(1),
+                'title'      : item['title'],
+                'description': item['itunes:summary'],
+                'url'        : build_url({
+                                'mode': 'stream',
+                                'url': item['enclosure']['@url'] #item['guid']
+                               })
             }
         })
         index += 1
@@ -104,35 +98,52 @@ def build_menu(items, is_folder):
     :param is_folder: If True the item is channel else a playlist.
     :type is_folder: bool
     """
+
     items_list = []
 
     for item in items:
+        album_cover = clean_album_cover(items[item])
+
         # create a list item using the song filename for the label
-        li = xbmcgui.ListItem(label=items[item]['title'])
-        # set the fanart to the album cover
-        if not is_folder:
-            li.setProperty('IsPlayable', 'true')
-        li.setProperty('PlotOutline', items[item]['description'])
+        li = xbmcgui.ListItem(label = items[item]['title'])
+
+        li.setProperty('IsPlayable', 'false' if is_folder else 'true')
+
+        # li.setProperty('PlotOutline', items[item]['description'])
+
         li.setInfo(
-            'video', {
+            type = 'video', infoLabels = {
                 'title': items[item]['title'],
                 'genre': 'Podcast',
-                'plot': items[item]['description']
+                'plot': items[item]['description'],
+                'plotoutline': items[item]['description'],
+                'mediatype' : 'musicvideo'
             })
+
         li.setArt({
-            'thumb':
-            items[item]['album_cover'],
-            'poster':
-            items[item]['album_cover'],
-            'fanart':
-            os.path.join(ADDON_FOLDER, 'resources', 'media', 'fanart.jpg')
+            'thumb' : album_cover,
+            'poster': album_cover,
+            'fanart': os.path.join(ADDON_FOLDER, 'resources/media/fanart.jpg')
         })
+
         url = items[item]['url']
         items_list.append((url, li, is_folder))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE, items_list, len(items_list))
-    xbmcplugin.setContent(ADDON_HANDLE, 'songs')
+    xbmcplugin.setContent(ADDON_HANDLE, 'musicvideos')
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
+def clean_album_cover(item):
+    substring_to_remove = "https://eco99fm.maariv.co.il/download/Sets/pictures/"
+
+    album_cover = item['album_cover']
+    isSubstringExist = album_cover.count(substring_to_remove)
+
+    if isSubstringExist > 1:
+        album_cover = album_cover.replace(substring_to_remove, "", 1)
+    elif isSubstringExist == 1 and 'SetsCategories' in album_cover:
+        album_cover = album_cover.replace(substring_to_remove, "")
+
+    return album_cover
 
 def play(url):
     """Play playlist by URL.
@@ -155,7 +166,8 @@ def main():
         items = get_playlists(args['url'][0])
         build_menu(items, False)
     elif mode[0] == 'stream':
-        play(args['url'][0].replace('/playlist.m3u8', ''))
+        play(args['url'][0])
+        # play(args['url'][0].replace('/playlist.m3u8', ''))
 
 
 if __name__ == '__main__':
